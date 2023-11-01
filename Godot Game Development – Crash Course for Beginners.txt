@@ -36,3 +36,95 @@ Godot notes:
        - StaticBody2D:
           - 2D physics body koje je statično ili se pomiče pomoću skripte (npr. platforma na koju se može skočiti i ide lijevo desno)
           - koristi se za pod ili zidove
+
+
+
+Adding new scene:
+    - Main Scene/Menu Scene:
+       - Add -> 2D Scene
+    - Buttons Basics:
+      - unutar scene -> Add Child Node -> search Button (CheckButton/ColorPickerButton/MenuButton/OptionButton/LinkButton/TextureButton) -> npr. Button
+      - lijevo unutar Inspector -> Text -> promjenimo Text button-a
+      - Tooltip -> Text - omogućava da prilikom hover-anja mišem iznad button-a vidimo unešeni text
+      - Attach Node Script -> izaberemo lokaciju skripte -> Template izaberemo Node: Default -> Create
+      - za osnove korištenja button-a je potrebno imati samo: extends Node2D
+      - s desne strane odemo na Node:
+         - NAPOMENA: istražiti samostalno Groups, jako moćan alat, ima puno dobrih videa
+         - Node -> Signals -> pressed() -> double click on it -> izaberemo skriptu koja handle-a logiku buttona -> Connect
+         - unutar generirane fje napišemo logiku 
+         - npr. ako je quit button u pitanju:
+             - get_tree().quit()
+         - npr. ako je "change sceen" kao što je Play button:
+             - isto kao i za quit
+             - get_tree().change_scene_to _file("putanja_do_file")
+    - Fixing Asset Pixelation:
+       - gornja alatna traka s dropdown izbornicima:
+          - Project -> Project Settings -> Textures -> Default Texture Filter -> Nearest (Default-no je Linear) 
+          - good to know: klik na asset unuatr scene -> desno Inspector -> CanvasItem -> Texture -> Filter -> Default-no je Inherit (from Project Settings)
+    - Making the Player Character:
+       - Create New Scene -> Other Node -> CharacterBody2D -> Save-amo na željenu lokaciju
+       - Create New Node -> CollisionShape2D -> unutar Inspector-a -> CollisionShape2D -> Shape -> izaberemo željeni shape e.g. New CapsuleShape2D
+       - kliknemo na CharacterBody2D -> Create New Node -> AnimatedSprite2D -> unutar Inspector-a -> AnimatedSprite2D -> Animation -> Sprite Frames -> New SpriteFrames
+       - tab na dnu ekrana SpriteFrames -> tamo di piše default -> dodamo nazive za sve animacije koje ćemo koristiti i za svaki drag & drop-amo sprite framo-ove ili
+         ispod "Animation Frames:" natpisa nađemo button Add frames from sprite sheet (Ctrl + Shift + O) -> lociramo sprite sheet -> namjestimo podjelu -> 
+         lijevi klik na ono što želimo dodati -> Add Frames
+       - kliknemo na CharacterBody2D -> Attach Node Script -> Template: CharacterBody2D: Basic Movement -> izaberemo lokaciju gdje želimo spremiti skriptu -> 
+         bez "Built-in Script" opcije -> Create
+       - odemo u scenu gdje želimo dodati Player-a -> pronažemo "save-an objekt/scenu" Player-a -> drag & drop na željeno mjesto unutar scene
+       - 
+    - StaticBody2D:
+       - korisno ako želimo imati npr platformu koja se pomiče
+       - dodamo StaticBody2D -> na njega dodamo CollisionShape2D
+    - Panel:
+       - Create New Node -> Panel
+       - u suštini je to "blok" sprite-ova, "dobar" način za dodati pod unutar igre
+    - Player Camera and Game Window Sizes:
+       - unutar Scene prozora označimo Player-a/CharacterBody2D -> Create New Node -> Camera2D
+       - Camera2D -> Inspector -> Camera2D -> Enabled -> Yes
+       - Camera2D -> Inspector -> Camera2D -> Zoom -> postavimo željene vrijednosti za X i Y e.g X -> 1.7 i Y -> 1.7
+       - ako želimo različite vrijednosti za X i Y onda "maknemo link" između X i Y
+       - Window/Display "settings":
+          - Project -> Project Settings -> Window -> Viewpoint Width/Viewpoint Height - postavimo željenu rezoluciju
+    - Animation Player:
+       - Create New Node -> AnimationPlayer
+       - AnimationPlayer -> tab dolje Animation -> kliknem na Animation button -> New i kreiram željene "spremnike" za animacije
+       - AnimationPlayer dozvoljava da uzmemo "key/property" nečega i mjenjamo ga kroz vrijeme
+       - označimo AnimatedSprite2D -> dolje na Animation tab -> Inspector -> izaberem željenu animaciju u Animation prozoru i u inspektoru
+         -> Inspector -> AnimatedSprite2D -> Animation -> kliknem na ključ -> unutar pop-up-a kliknem Create -> Inspector Frame i kliknem
+         na svakom Frame-u ključ -> na pop-up-u kliknem Create -> na kraju animaciju "Idle" stavim da se loop-a, stavim "Autoplay on Load" 
+         i svakoj animaciji podesim vrijeme trajanja
+
+       - unutar Player.gd skripte:
+          - prije svih funkcija dodam:
+             - @onready var anim_player = get_node("<putanja_do_AnimationPlayer>")
+          - unutar _physics_process(delta) fje:
+             - tamo gdje želim dodati animacije dodajem slijedeće primjere koda:
+                - anim_player.play("<case_sensitive_naziv_animacije_unutar_AnimationPlayer-a>")
+             - prilagodbu animacije za skok/idle/run radim pomoću velocity-a:
+                - if velocity.y == 0: 
+                     anim_player.play("Run/Idle")
+             - ako padam:
+                - if velocity.y > 0:
+                     anim_player.play("Fall")
+             - uštimavanje smjera kretanja se radi pomoću direction-a:
+                - if direction == -1:
+                     get_node("AnimatedSprite2D").flip_h = true # lijevo, false desno
+                  elif direction == 1: # ako je samo else onda će uvijek gledati u desno, neće upamtiti u koju stranu inače gleda
+                     get_node("AnimatedSprite2D").flip_h = false
+    - za popravljanje CollisionShape2D kako bi sprite u svakom trenutku bio unutar collider-a:
+       - AnimationPlayer -> namjestimo Idle animaciju da se vrti unutar Inspector-a -> zaključamo AnimatedSprite2D -> resize-amo CollsionShape2D
+    - Setting Up Paralax Background:
+       - Create New Scene -> Other Node -> ParallaxBackground -> označimo ParallaxBackground -> Create New Node -> ParallaxLayer
+       - ParallaxLayer -> drag & drop sliku/sprite koji želimo koristiti unutar "ParallaxBackground -> ParallaxLayer -> scene" 
+         -> save-amo kao e.g. BG i dodamo (ako nije default-no) ispod ParallaxLayer-a
+       - ParallaxLayer -> Inspector -> Motion -> Mirroring -> podesimo od kojeg pixel-a po X i Y da na mirror-a asset koji je attach-an na ParallaxLayer
+       - označimo ParallaxBackground -> Add New Script -> (Template:) (Node:) Default -> izaberemo lokaciju i NE označimo Built-in Script
+       - extends ParallaxBackground
+         var scrolling_speed = <željena_vrijednost> e.g. 100
+         func _process(delta):
+            scroll_offset.x -= scrolling_speed * delta
+       - ParallaxBackground dodamo u željenu scenu jednostavnim drag & drop-om unutar Scene-a (gore lijevo, blizu Import)
+       - ParallaxLayert -> Inspector -> Motion -> Scale -> odlinkamo i postavimo na željenu vrijednost e.g. 0.7
+
+    - BITNO: ako dupliciramo nešto (doslovno bilo što) pripaziti da napravimo da je unique:
+       - kliknemo na to što želimo postaviti kao unique (CollisionShape2D) -> Inspector -> CollisionShape2D -> Shape -> Drop down -> Make Unique
