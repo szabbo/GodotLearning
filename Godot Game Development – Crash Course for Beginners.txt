@@ -1,0 +1,38 @@
+itch.io - testiranje, potencijalno početno financiranje projekta
+
+Tutorial link: https://www.youtube.com/watch?v=S8lMTwSRoRg
+
+Godot Basicks:
+ - Animating Player:
+    - Animated Sprite
+    - Animation Player
+    - Simple Physics
+ - Paralax Background:
+    - Parallax Mirroring
+ - Save and Load:
+    - Saving and Loading Using Built In Godot FILE System
+    - File Access
+    - Dictionaries
+    - JSON file
+ - AI Mobs/Opponents:
+    - Area2D
+ - Collectables:
+   - Timer
+   - Tween
+ - Tilemaps:
+
+
+Godot notes:
+    - Texture Button:
+       - koristi se ako imamo texturu button-a (UI/UX dizajner nam je kreirao button)
+       - za "zatvoriti igru":
+          - dodati button
+          - spojiti signal na scenu unutar koje ga želimo koristiti (ako sam dobro razumio, istražiti još malo)
+          - koristiti - get_tree().quit()
+       - NOTE!!!
+          - kako bi se popravili problemi s "pixel-ima" (ukoliko sprite-ovi ne izgledaju pixelizirano):
+             - Project -> Project Settings -> Textures:
+                - promijeniti "Default Texture Filter" s "Linear" (default-nog) na "Nearest"
+       - StaticBody2D:
+          - 2D physics body koje je statično ili se pomiče pomoću skripte (npr. platforma na koju se može skočiti i ide lijevo desno)
+          - koristi se za pod ili zidove
