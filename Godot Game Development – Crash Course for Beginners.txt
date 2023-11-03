@@ -125,6 +125,63 @@ Adding new scene:
             scroll_offset.x -= scrolling_speed * delta
        - ParallaxBackground dodamo u željenu scenu jednostavnim drag & drop-om unutar Scene-a (gore lijevo, blizu Import)
        - ParallaxLayert -> Inspector -> Motion -> Scale -> odlinkamo i postavimo na željenu vrijednost e.g. 0.7
+    - TileMaps and TileSets:
+       - Create New Node -> TileMap -> Inspector -> Tile Set -> New TileSet
+       - unutar Scene-a kliknemo na TileMap -> pri dnu ekrana klik na TileSet i dodamo Tile-ove koje želimo koristiti i kliknemo Yes
+       - za korištenje kliknemo pri dnu ekrana na TileMap i "obojamo" scenu prema želji
+       - fizika/collider-i:
+          - unutar Scene kliknemo na TileMap -> Inspector -> Physics Layer -> kliknemo na Add Element -> TileSet (pri dnu ekrana) ->
+            Paint -> Paint Properties -> Select Property Editor -> Physics Layer 0 -> kliknemo lijevim klikom na tile kojem želimo dodati fiziku
+    - Limiting Player Movement to Screen Bounds:
+       - odemo na Player-a (Player Scene jer on ima Camera2D node):
+          - Camera2D -> Inspector -> Limit -> podesimo vrijednosti kako želimo
+          - obično:
+             - Left: 0
+             - Top: 0
+             - Right: <krajnja_desna_točka_level-a>
+             - Bottom: <krajnja_donja_točka_level-a>
+    - Creating Our First Enemy: Frog Mob:
+       - Add New Scene -> Other Node -> CharacterBody2D 
+       - označimo CharacterBody2D -> Create New Node -> CollisionShape2D -> Inspector -> Shape -> New SquareShape2D
+       - označimo CharacterBody2D -> Create New Node -> AnimatedSprite2D -> Inspector -> Sprite Frames -> New SpriteFrames
+       - označimo AnimatedSprite2D -> SpriteFrames i dodamo sve željene animacije (objašnjeno, samo Ctrl + F -> Making the Player Character)
+       - rename-amo i save-amo kako i gdje želimo
+       - Attach Node Script -> Template: Node: Default, izaberemo lokaciju gdje želimo da se skripta spremi i kliknemo na Create
+       - označimo Frog/CharacterBody2D -> Create New Node -> Area2D
+       - označimo Area2D -> Create New Node -> CollisionShape2D -> Inspector -> Shape -> New CircleShape2D
+       - Area2D -> rename-amo u PlayerDetection
+       - označimo Area2D/PlayerDetection -> Inspector -> Node -> dvoklik na body_enter(body: Node2D) signal -> označimo Frog/CharacterBody2D i kliknemo Connect
+       - unutar kreiranog signala (_on_player_detection_body_entered(body)) dodamo slijedeći dio koda gdje će se handle-ati logika ako 
+         Player/CharacterBody2D uže u regiju Area2D:
+            if body.name == Player:
+               print("Do Smthng!")
+       - fiziku dodamo prije _on_player_detection_body_entered(body) handle-anja signala:
+            var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+            func _physics_process(delta):
+               Velocity.y += gravity * delta
+               
+               move_and_slide() # bez ovog fizika neće raditi
+       - kako bi otkrili poziciju Player/CharacterBody2D:
+            var player = get_node("<putanja_do_player-a>")
+            var direction = (player.position - self.position).normalized()
+            if direction. > 0:
+               print("right")
+            else:
+               print("left")
+
+               STAO: 1:03:23
+      
+    - Frog Mob AI Scripting: Chase the Player:
+    - Frog Mob AI Scripting: Hurt and Kill the Player:
+    - Player Health UI and Scripting:
+    - Global Game Scripts:
+    - Saving and Loading the Game:
+    - Adding Gold Count to UI:
+    - Set Up Collectable Items:
+    - Animating Tweens In Godot:
+    - Timer Nodes for Spawning Items:
+    - RNG: Random Number Generator in Godot:
+    - Quick Tip - Organizing Spawning Folders:
 
     - BITNO: ako dupliciramo nešto (doslovno bilo što) pripaziti da napravimo da je unique:
        - kliknemo na to što želimo postaviti kao unique (CollisionShape2D) -> Inspector -> CollisionShape2D -> Shape -> Drop down -> Make Unique

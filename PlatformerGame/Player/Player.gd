@@ -21,9 +21,9 @@ func _physics_process(delta):
 		velocity.y = JUMP_VELOCITY
 		anim_player.play("Jump")
 	
-#	ako zelim umjesto spacebar-a koristiti strijelicu prema gore
-#	if Input.is_action_just_pressed("ui_up") and is_on_floor():
-#		velocity.y = JUMP_VELOCITY
+##    ako zelim umjesto spacebar-a koristiti strijelicu prema gore
+#    if Input.is_action_just_pressed("ui_up") and is_on_floor():
+#        velocity.y = JUMP_VELOCITY
 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
@@ -49,3 +49,10 @@ func _physics_process(delta):
 		anim_player.play("Fall")
 
 	move_and_slide()
+	
+	if Game.player_hp <= 0:
+		queue_free()
+		Game.player_hp = 10
+		Game.gold = 0
+		Utils.save_game()
+		get_tree().change_scene_to_file("res://main.tscn")
